@@ -76,9 +76,14 @@ def parse_pkglist(pkgs) -> list[str]:
 def parse_package(content: str):
 	# print("Parsing package!")
 	pkg_dict: dict[str, str] = {}
+	lastkey = ''
 	for line in content.splitlines():
-		k, v = line.split(':', 1)
-		pkg_dict[k.strip()] = v.strip()
+		if not line.startswith(' '):
+			k, v = line.split(':', 1)
+			lastkey = k
+			pkg_dict[k.strip()] = v.strip()
+		else:
+			pkg_dict[lastkey] += ' '.join(line.strip())
 	# Now we have a basic structure, but we need to process them further, i.e. `Depends` field. 
 	# `Depends` field is a list of packages, showing its dependency, we need to remove the version restrictions, and convert it into a list.
 	# Todo done: add Optional() support.
